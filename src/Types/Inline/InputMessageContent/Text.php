@@ -8,8 +8,9 @@
 
 namespace TelegramBot\Api\Types\Inline\InputMessageContent;
 
-use TelegramBot\Api\BaseType;
 use TelegramBot\Api\TypeInterface;
+use TelegramBot\Api\Types\LinkPreviewOptions;
+use TelegramBot\Api\Types\ArrayOfMessageEntity;
 use TelegramBot\Api\Types\Inline\InputMessageContent;
 
 /**
@@ -26,17 +27,19 @@ class Text extends InputMessageContent implements TypeInterface
      *
      * @var array
      */
-    static protected $requiredParams = ['message_text'];
+    protected static $requiredParams = ['message_text'];
 
     /**
      * {@inheritdoc}
      *
      * @var array
      */
-    static protected $map = [
+    protected static $map = [
         'message_text' => true,
         'parse_mode' => true,
-        'disable_web_page_preview' => true,
+        'entities' => ArrayOfMessageEntity::class,
+        'disable_web_page_preview' => true, // @todo: remove as deprecated with bot api 7.0
+        'link_preview_options' => LinkPreviewOptions::class
     ];
 
     /**
@@ -50,28 +53,47 @@ class Text extends InputMessageContent implements TypeInterface
      * Optional. Send Markdown or HTML,
      * if you want Telegram apps to show bold, italic, fixed-width text or inline URLs in your bot's message.
      *
-     * @var string
+     * @var string|null
      */
     protected $parseMode;
 
     /**
+     * @deprecated use $linkPreviewOptions instead
      * Optional. Disables link previews for links in the sent message
      *
-     * @var bool
+     * @var bool|null
      */
     protected $disableWebPagePreview;
 
     /**
-     * Text constructor.
-     * @param string $messageText
-     * @param string $parseMode
-     * @param bool $disableWebPagePreview
+     * Link preview generation options for the message
+     *
+     * @var LinkPreviewOptions|null
      */
-    public function __construct($messageText, $parseMode = null, $disableWebPagePreview = false)
+    protected $linkPreviewOptions;
+
+    /**
+     * Text constructor.
+     *
+     * @param string $messageText
+     * @param string|null $parseMode
+     * @param bool $disableWebPagePreview
+     * @param LinkPreviewOptions|null $linkPreviewOptions Link preview generation options for the message.
+     */
+    public function __construct($messageText, $parseMode = null, $disableWebPagePreview = false, $linkPreviewOptions = null)
     {
         $this->messageText = $messageText;
         $this->parseMode = $parseMode;
         $this->disableWebPagePreview = $disableWebPagePreview;
+
+        if (null === $linkPreviewOptions && false !== $disableWebPagePreview) {
+            @trigger_error('setting $disableWebPagePreview is now deprecated use $linkPreviewOptions instead', E_USER_DEPRECATED);
+
+            $this->linkPreviewOptions = new LinkPreviewOptions();
+            $this->linkPreviewOptions->map([
+                'is_disabled' => $disableWebPagePreview
+            ]);
+        }
     }
 
     /**
@@ -84,6 +106,8 @@ class Text extends InputMessageContent implements TypeInterface
 
     /**
      * @param string $messageText
+     *
+     * @return void
      */
     public function setMessageText($messageText)
     {
@@ -91,7 +115,7 @@ class Text extends InputMessageContent implements TypeInterface
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getParseMode()
     {
@@ -99,7 +123,9 @@ class Text extends InputMessageContent implements TypeInterface
     }
 
     /**
-     * @param string $parseMode
+     * @param string|null $parseMode
+     *
+     * @return void
      */
     public function setParseMode($parseMode)
     {
@@ -107,7 +133,7 @@ class Text extends InputMessageContent implements TypeInterface
     }
 
     /**
-     * @return boolean
+     * @return bool|null
      */
     public function isDisableWebPagePreview()
     {
@@ -115,10 +141,29 @@ class Text extends InputMessageContent implements TypeInterface
     }
 
     /**
-     * @param boolean $disableWebPagePreview
+     * @param bool|null $disableWebPagePreview
+     *
+     * @return void
      */
     public function setDisableWebPagePreview($disableWebPagePreview)
     {
         $this->disableWebPagePreview = $disableWebPagePreview;
+    }
+
+    /**
+     * @return LinkPreviewOptions|null
+     */
+    public function getLinkPreviewOptions()
+    {
+        return $this->linkPreviewOptions;
+    }
+
+    /**
+     * @param LinkPreviewOptions|null $linkPreviewOptions
+     * @return void
+     */
+    public function setLinkPreviewOptions($linkPreviewOptions)
+    {
+        $this->linkPreviewOptions = $linkPreviewOptions;
     }
 }

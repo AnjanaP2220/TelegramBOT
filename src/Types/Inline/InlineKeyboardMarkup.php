@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: YaroslavMolchan
- * Date: 16/03/17
- * Time: 22:15
- */
 
 namespace TelegramBot\Api\Types\Inline;
 
@@ -17,14 +11,14 @@ class InlineKeyboardMarkup extends BaseType
      *
      * @var array
      */
-    static protected $requiredParams = ['inline_keyboard'];
+    protected static $requiredParams = ['inline_keyboard'];
 
     /**
      * {@inheritdoc}
      *
      * @var array
      */
-    static protected $map = [
+    protected static $map = [
         'inline_keyboard' => true,
     ];
 
@@ -39,7 +33,7 @@ class InlineKeyboardMarkup extends BaseType
     /**
      * @param array $inlineKeyboard
      */
-    public function __construct($inlineKeyboard)
+    public function __construct($inlineKeyboard = [])
     {
         $this->inlineKeyboard = $inlineKeyboard;
     }
@@ -54,6 +48,8 @@ class InlineKeyboardMarkup extends BaseType
 
     /**
      * @param array $inlineKeyboard
+     *
+     * @return void
      */
     public function setInlineKeyboard($inlineKeyboard)
     {

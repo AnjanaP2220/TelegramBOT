@@ -19,19 +19,20 @@ class Animation extends BaseType implements TypeInterface
      *
      * @var array
      */
-    static protected $requiredParams = ['file_id', 'width', 'height', 'duration'];
+    protected static $requiredParams = ['file_id', 'file_unique_id', 'width', 'height', 'duration'];
 
     /**
      * {@inheritdoc}
      *
      * @var array
      */
-    static protected $map = [
+    protected static $map = [
         'file_id' => true,
+        'file_unique_id' => true,
         'width' => true,
         'height' => true,
         'duration' => true,
-        'thumb' => PhotoSize::class,
+        'thumbnail' => PhotoSize::class,
         'file_name' => true,
         'mime_type' => true,
         'file_size' => true
@@ -43,6 +44,13 @@ class Animation extends BaseType implements TypeInterface
      * @var string
      */
     protected $fileId;
+
+    /**
+     * Unique identifier for this file, which is supposed to be the same over time and for different bots. Can't be used to download or reuse the file.
+     *
+     * @var string
+     */
+    protected $fileUniqueId;
 
     /**
      * Video width as defined by sender
@@ -66,54 +74,32 @@ class Animation extends BaseType implements TypeInterface
     protected $duration;
 
     /**
-     * Video thumbnail
-     *
-     * @var PhotoSize
-     */
-    protected $thumb;
-
-    /**
      * Optional. Animation thumbnail as defined by sender
      *
      * @var PhotoSize
      */
+    protected $thumbnail;
+
+    /**
+     * Optional. Original animation filename as defined by sender
+     *
+     * @var string|null
+     */
     protected $fileName;
 
     /**
-     * Optional. Mime type of a file as defined by sender
+     * Optional. MIME type of the file as defined by sender
      *
-     * @var string
+     * @var string|null
      */
     protected $mimeType;
 
     /**
-     * Optional. File size
+     * Optional. File size in bytes. It can be bigger than 2^31 and some programming languages may have difficulty/silent defects in interpreting it. But it has at most 52 significant bits, so a signed 64-bit integer or double-precision float type are safe for storing this value.
      *
-     * @var int
+     * @var int|null
      */
     protected $fileSize;
-
-    /**
-     * @return int
-     */
-    public function getDuration()
-    {
-        return $this->duration;
-    }
-
-    /**
-     * @param int $duration
-     *
-     * @throws InvalidArgumentException
-     */
-    public function setDuration($duration)
-    {
-        if (is_integer($duration)) {
-            $this->duration = $duration;
-        } else {
-            throw new InvalidArgumentException();
-        }
-    }
 
     /**
      * @return string
@@ -125,6 +111,7 @@ class Animation extends BaseType implements TypeInterface
 
     /**
      * @param string $fileId
+     * @return void
      */
     public function setFileId($fileId)
     {
@@ -132,22 +119,39 @@ class Animation extends BaseType implements TypeInterface
     }
 
     /**
-     * @return int
+     * @return string
      */
-    public function getFileSize()
+    public function getFileUniqueId()
     {
-        return $this->fileSize;
+        return $this->fileUniqueId;
     }
 
     /**
-     * @param int $fileSize
-     *
+     * @param string $fileUniqueId
+     * @return void
+     */
+    public function setFileUniqueId($fileUniqueId)
+    {
+        $this->fileUniqueId = $fileUniqueId;
+    }
+
+    /**
+     * @return int
+     */
+    public function getWidth()
+    {
+        return $this->width;
+    }
+
+    /**
+     * @param int $width
+     * @return void
      * @throws InvalidArgumentException
      */
-    public function setFileSize($fileSize)
+    public function setWidth($width)
     {
-        if (is_integer($fileSize)) {
-            $this->fileSize = $fileSize;
+        if (is_integer($width)) {
+            $this->width = $width;
         } else {
             throw new InvalidArgumentException();
         }
@@ -163,7 +167,7 @@ class Animation extends BaseType implements TypeInterface
 
     /**
      * @param int $height
-     *
+     * @return void
      * @throws InvalidArgumentException
      */
     public function setHeight($height)
@@ -176,39 +180,46 @@ class Animation extends BaseType implements TypeInterface
     }
 
     /**
-     * @return string
+     * @return int
      */
-    public function getMimeType()
+    public function getDuration()
     {
-        return $this->mimeType;
+        return $this->duration;
     }
 
     /**
-     * @param string $mimeType
+     * @param int $duration
+     * @return void
+     * @throws InvalidArgumentException
      */
-    public function setMimeType($mimeType)
+    public function setDuration($duration)
     {
-        $this->mimeType = $mimeType;
+        if (is_integer($duration)) {
+            $this->duration = $duration;
+        } else {
+            throw new InvalidArgumentException();
+        }
     }
 
     /**
      * @return PhotoSize
      */
-    public function getThumb()
+    public function getThumbnail()
     {
-        return $this->thumb;
+        return $this->thumbnail;
     }
 
     /**
-     * @param PhotoSize $thumb
+     * @param PhotoSize $thumbnail
+     * @return void
      */
-    public function setThumb(PhotoSize $thumb)
+    public function setThumbnail(PhotoSize $thumbnail)
     {
-        $this->thumb = $thumb;
+        $this->thumbnail = $thumbnail;
     }
 
     /**
-     * @return string $fileName
+     * @return string|null
      */
     public function getFileName()
     {
@@ -217,6 +228,7 @@ class Animation extends BaseType implements TypeInterface
 
     /**
      * @param string $fileName
+     * @return void
      */
     public function setFileName($fileName)
     {
@@ -224,22 +236,39 @@ class Animation extends BaseType implements TypeInterface
     }
 
     /**
-     * @return int
+     * @return string|null
      */
-    public function getWidth()
+    public function getMimeType()
     {
-        return $this->width;
+        return $this->mimeType;
     }
 
     /**
-     * @param int $width
-     *
+     * @param string $mimeType
+     * @return void
+     */
+    public function setMimeType($mimeType)
+    {
+        $this->mimeType = $mimeType;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getFileSize()
+    {
+        return $this->fileSize;
+    }
+
+    /**
+     * @param int|null $fileSize
+     * @return void
      * @throws InvalidArgumentException
      */
-    public function setWidth($width)
+    public function setFileSize($fileSize)
     {
-        if (is_integer($width)) {
-            $this->width = $width;
+        if (is_integer($fileSize) || is_null($fileSize)) {
+            $this->fileSize = $fileSize;
         } else {
             throw new InvalidArgumentException();
         }

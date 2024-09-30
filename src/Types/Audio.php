@@ -8,7 +8,7 @@ use TelegramBot\Api\TypeInterface;
 
 /**
  * Class Audio
- * This object represents an audio file (voice note).
+ * This object represents an audio file to be treated as music by the Telegram clients.
  *
  * @package TelegramBot\Api\Types
  */
@@ -19,20 +19,23 @@ class Audio extends BaseType implements TypeInterface
      *
      * @var array
      */
-    static protected $requiredParams = ['file_id', 'duration'];
+    protected static $requiredParams = ['file_id', 'file_unique_id', 'duration'];
 
     /**
      * {@inheritdoc}
      *
      * @var array
      */
-    static protected $map = [
+    protected static $map = [
         'file_id' => true,
+        'file_unique_id' => true,
         'duration' => true,
         'performer' => true,
         'title' => true,
+        'file_name' => true,
         'mime_type' => true,
-        'file_size' => true
+        'file_size' => true,
+        'thumbnail' => PhotoSize::class
     ];
 
     /**
@@ -43,7 +46,14 @@ class Audio extends BaseType implements TypeInterface
     protected $fileId;
 
     /**
-     * Photo width
+     * Unique identifier for this file, which is supposed to be the same over time and for different bots. Can't be used to download or reuse the file.
+     *
+     * @var string
+     */
+    protected $fileUniqueId;
+
+    /**
+     * Duration of the audio in seconds as defined by sender
      *
      * @var int
      */
@@ -52,30 +62,78 @@ class Audio extends BaseType implements TypeInterface
     /**
      * Optional. Performer of the audio as defined by sender or by audio tags
      *
-     * @var string
+     * @var string|null
      */
     protected $performer;
 
     /**
      * Optional. Title of the audio as defined by sender or by audio tags
      *
-     * @var string
+     * @var string|null
      */
     protected $title;
 
     /**
+     * Optional. Original filename as defined by sender
+     *
+     * @var string|null
+     */
+    protected $fileName;
+
+    /**
      * Optional. MIME type of the file as defined by sender
      *
-     * @var string
+     * @var string|null
      */
     protected $mimeType;
 
     /**
-     * Optional. File size
+     * Optional. File size in bytes. It can be bigger than 2^31 and some programming languages may have difficulty/silent defects in interpreting it. But it has at most 52 significant bits, so a signed 64-bit integer or double-precision float type are safe for storing this value.
      *
-     * @var int
+     * @var int|null
      */
     protected $fileSize;
+
+    /**
+     * Optional. Thumbnail of the album cover to which the music file belongs
+     *
+     * @var PhotoSize|null
+     */
+    protected $thumbnail;
+
+    /**
+     * @return string
+     */
+    public function getFileId()
+    {
+        return $this->fileId;
+    }
+
+    /**
+     * @param string $fileId
+     * @return void
+     */
+    public function setFileId($fileId)
+    {
+        $this->fileId = $fileId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFileUniqueId()
+    {
+        return $this->fileUniqueId;
+    }
+
+    /**
+     * @param string $fileUniqueId
+     * @return void
+     */
+    public function setFileUniqueId($fileUniqueId)
+    {
+        $this->fileUniqueId = $fileUniqueId;
+    }
 
     /**
      * @return int
@@ -87,7 +145,7 @@ class Audio extends BaseType implements TypeInterface
 
     /**
      * @param int $duration
-     *
+     * @return void
      * @throws InvalidArgumentException
      */
     public function setDuration($duration)
@@ -100,7 +158,7 @@ class Audio extends BaseType implements TypeInterface
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getPerformer()
     {
@@ -108,7 +166,8 @@ class Audio extends BaseType implements TypeInterface
     }
 
     /**
-     * @param string $performer
+     * @param string|null $performer
+     * @return void
      */
     public function setPerformer($performer)
     {
@@ -116,7 +175,7 @@ class Audio extends BaseType implements TypeInterface
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getTitle()
     {
@@ -124,7 +183,8 @@ class Audio extends BaseType implements TypeInterface
     }
 
     /**
-     * @param string $title
+     * @param string|null $title
+     * @return void
      */
     public function setTitle($title)
     {
@@ -132,45 +192,24 @@ class Audio extends BaseType implements TypeInterface
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getFileId()
+    public function getFileName()
     {
-        return $this->fileId;
+        return $this->fileName;
     }
 
     /**
-     * @param string $fileId
+     * @param string|null $fileName
+     * @return void
      */
-    public function setFileId($fileId)
+    public function setFileName($fileName)
     {
-        $this->fileId = $fileId;
+        $this->fileName = $fileName;
     }
 
     /**
-     * @return int
-     */
-    public function getFileSize()
-    {
-        return $this->fileSize;
-    }
-
-    /**
-     * @param int $fileSize
-     *
-     * @throws InvalidArgumentException
-     */
-    public function setFileSize($fileSize)
-    {
-        if (is_integer($fileSize)) {
-            $this->fileSize = $fileSize;
-        } else {
-            throw new InvalidArgumentException();
-        }
-    }
-
-    /**
-     * @return string
+     * @return string|null
      */
     public function getMimeType()
     {
@@ -178,10 +217,50 @@ class Audio extends BaseType implements TypeInterface
     }
 
     /**
-     * @param string $mimeType
+     * @param string|null $mimeType
+     * @return void
      */
     public function setMimeType($mimeType)
     {
         $this->mimeType = $mimeType;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getFileSize()
+    {
+        return $this->fileSize;
+    }
+
+    /**
+     * @param int|null $fileSize
+     * @return void
+     * @throws InvalidArgumentException
+     */
+    public function setFileSize($fileSize)
+    {
+        if (is_integer($fileSize) || is_null($fileSize)) {
+            $this->fileSize = $fileSize;
+        } else {
+            throw new InvalidArgumentException();
+        }
+    }
+
+    /**
+     * @return PhotoSize|null
+     */
+    public function getThumbnail()
+    {
+        return $this->thumbnail;
+    }
+
+    /**
+     * @param PhotoSize|null $thumbnail
+     * @return void
+     */
+    public function setThumbnail($thumbnail)
+    {
+        $this->thumbnail = $thumbnail;
     }
 }

@@ -19,26 +19,34 @@ class PhotoSize extends BaseType implements TypeInterface
      *
      * @var array
      */
-    static protected $requiredParams = ['file_id', 'width', 'height'];
+    protected static $requiredParams = ['file_id', 'file_unique_id', 'width', 'height'];
 
     /**
      * {@inheritdoc}
      *
      * @var array
      */
-    static protected $map = [
+    protected static $map = [
         'file_id' => true,
+        'file_unique_id' => true,
         'width' => true,
         'height' => true,
         'file_size' => true,
     ];
 
     /**
-     * Unique identifier for this file
+     * Identifier for this file, which can be used to download or reuse the file
      *
      * @var string
      */
     protected $fileId;
+
+    /**
+     * Unique identifier for this file, which is supposed to be the same over time and for different bots. Can't be used to download or reuse the file.
+     *
+     * @var string
+     */
+    protected $fileUniqueId;
 
     /**
      * Photo width
@@ -55,9 +63,9 @@ class PhotoSize extends BaseType implements TypeInterface
     protected $height;
 
     /**
-     * Optional. File size
+     * Optional. File size in bytes
      *
-     * @var int
+     * @var int|null
      */
     protected $fileSize;
 
@@ -71,6 +79,7 @@ class PhotoSize extends BaseType implements TypeInterface
 
     /**
      * @param string $fileId
+     * @return void
      */
     public function setFileId($fileId)
     {
@@ -78,22 +87,39 @@ class PhotoSize extends BaseType implements TypeInterface
     }
 
     /**
-     * @return int
+     * @return string
      */
-    public function getFileSize()
+    public function getFileUniqueId()
     {
-        return $this->fileSize;
+        return $this->fileUniqueId;
     }
 
     /**
-     * @param int $fileSize
-     *
+     * @param string $fileUniqueId
+     * @return void
+     */
+    public function setFileUniqueId($fileUniqueId)
+    {
+        $this->fileUniqueId = $fileUniqueId;
+    }
+
+    /**
+     * @return int
+     */
+    public function getWidth()
+    {
+        return $this->width;
+    }
+
+    /**
+     * @param int $width
+     * @return void
      * @throws InvalidArgumentException
      */
-    public function setFileSize($fileSize)
+    public function setWidth($width)
     {
-        if (is_integer($fileSize)) {
-            $this->fileSize = $fileSize;
+        if (is_integer($width)) {
+            $this->width = $width;
         } else {
             throw new InvalidArgumentException();
         }
@@ -109,7 +135,7 @@ class PhotoSize extends BaseType implements TypeInterface
 
     /**
      * @param int $height
-     *
+     * @return void
      * @throws InvalidArgumentException
      */
     public function setHeight($height)
@@ -122,22 +148,22 @@ class PhotoSize extends BaseType implements TypeInterface
     }
 
     /**
-     * @return int
+     * @return int|null
      */
-    public function getWidth()
+    public function getFileSize()
     {
-        return $this->width;
+        return $this->fileSize;
     }
 
     /**
-     * @param int $width
-     *
+     * @param int|null $fileSize
+     * @return void
      * @throws InvalidArgumentException
      */
-    public function setWidth($width)
+    public function setFileSize($fileSize)
     {
-        if (is_integer($width)) {
-            $this->width = $width;
+        if (is_integer($fileSize) || is_null($fileSize)) {
+            $this->fileSize = $fileSize;
         } else {
             throw new InvalidArgumentException();
         }

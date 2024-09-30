@@ -8,6 +8,8 @@ use TelegramBot\Api\TypeInterface;
 /**
  * Class Dice
  * This object represents an animated emoji that displays a random value.
+ *
+ * @package TelegramBot\Api\Types
  */
 class Dice extends BaseType implements TypeInterface
 {
@@ -16,14 +18,14 @@ class Dice extends BaseType implements TypeInterface
      *
      * @var array
      */
-    static protected $requiredParams = ['emoji', 'value'];
+    protected static $requiredParams = ['emoji', 'value'];
 
     /**
      * {@inheritdoc}
      *
      * @var array
      */
-    static protected $map = [
+    protected static $map = [
         'emoji' => true,
         'value' => true
     ];
@@ -52,6 +54,7 @@ class Dice extends BaseType implements TypeInterface
 
     /**
      * @param string $emoji
+     * @return void
      */
     public function setEmoji($emoji)
     {
@@ -68,6 +71,7 @@ class Dice extends BaseType implements TypeInterface
 
     /**
      * @param int $value
+     * @return void
      */
     public function setValue($value)
     {

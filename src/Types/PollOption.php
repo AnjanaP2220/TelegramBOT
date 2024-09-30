@@ -3,7 +3,6 @@
 namespace TelegramBot\Api\Types;
 
 use TelegramBot\Api\BaseType;
-use TelegramBot\Api\InvalidArgumentException;
 use TelegramBot\Api\TypeInterface;
 
 /**
@@ -19,16 +18,17 @@ class PollOption extends BaseType implements TypeInterface
      *
      * @var array
      */
-    static protected $requiredParams = ['text', 'voter_count'];
+    protected static $requiredParams = ['text', 'voter_count'];
 
     /**
      * {@inheritdoc}
      *
      * @var array
      */
-    static protected $map = [
+    protected static $map = [
         'text' => true,
-        'voter_count' => true
+        'voter_count' => true,
+        'text_entities' => ArrayOfMessageEntity::class
     ];
 
     /**
@@ -46,6 +46,13 @@ class PollOption extends BaseType implements TypeInterface
     protected $voterCount;
 
     /**
+     * Optional. Special entities that appear in the option text. Currently, only custom emoji entities are allowed in poll option texts
+     *
+     * @var array|null
+     */
+    protected $textEntities;
+
+    /**
      * @return string
      */
     public function getText()
@@ -55,6 +62,7 @@ class PollOption extends BaseType implements TypeInterface
 
     /**
      * @param string $text
+     * @return void
      */
     public function setText($text)
     {
@@ -71,9 +79,27 @@ class PollOption extends BaseType implements TypeInterface
 
     /**
      * @param int $voterCount
+     * @return void
      */
     public function setVoterCount($voterCount)
     {
         $this->voterCount = $voterCount;
+    }
+
+    /**
+     * @return array|null
+     */
+    public function getTextEntities()
+    {
+        return $this->textEntities;
+    }
+
+    /**
+     * @param array|null $textEntities
+     * @return void
+     */
+    public function setTextEntities($textEntities)
+    {
+        $this->textEntities = $textEntities;
     }
 }

@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: iGusev
- * Date: 13/04/16
- * Time: 13:55
- */
 
 namespace TelegramBot\Api\Types;
 
@@ -13,7 +7,7 @@ use TelegramBot\Api\TypeInterface;
 
 /**
  * Class Venue
- * This object represents a venue
+ * This object represents a venue.
  *
  * @package TelegramBot\Api\Types
  */
@@ -24,18 +18,21 @@ class Venue extends BaseType implements TypeInterface
      *
      * @var array
      */
-    static protected $requiredParams = ['location', 'title', 'address'];
+    protected static $requiredParams = ['location', 'title', 'address'];
 
     /**
      * {@inheritdoc}
      *
      * @var array
      */
-    static protected $map = [
+    protected static $map = [
         'location' => Location::class,
         'title' => true,
         'address' => true,
         'foursquare_id' => true,
+        'foursquare_type' => true,
+        'google_place_id' => true,
+        'google_place_type' => true,
     ];
 
     /**
@@ -62,9 +59,30 @@ class Venue extends BaseType implements TypeInterface
     /**
      * Optional. Foursquare identifier of the venue
      *
-     * @var string
+     * @var string|null
      */
     protected $foursquareId;
+
+    /**
+     * Optional. Foursquare type of the venue. (For example, “arts_entertainment/default”, “arts_entertainment/aquarium” or “food/icecream”.)
+     *
+     * @var string|null
+     */
+    protected $foursquareType;
+
+    /**
+     * Optional. Google Places identifier of the venue
+     *
+     * @var string|null
+     */
+    protected $googlePlaceId;
+
+    /**
+     * Optional. Google Places type of the venue.
+     *
+     * @var string|null
+     */
+    protected $googlePlaceType;
 
     /**
      * @return Location
@@ -76,6 +94,8 @@ class Venue extends BaseType implements TypeInterface
 
     /**
      * @param Location $location
+     *
+     * @return void
      */
     public function setLocation($location)
     {
@@ -92,6 +112,8 @@ class Venue extends BaseType implements TypeInterface
 
     /**
      * @param string $title
+     *
+     * @return void
      */
     public function setTitle($title)
     {
@@ -108,6 +130,8 @@ class Venue extends BaseType implements TypeInterface
 
     /**
      * @param string $address
+     *
+     * @return void
      */
     public function setAddress($address)
     {
@@ -115,7 +139,7 @@ class Venue extends BaseType implements TypeInterface
     }
 
     /**
-     * @return string
+     * @return null|string
      */
     public function getFoursquareId()
     {
@@ -123,10 +147,66 @@ class Venue extends BaseType implements TypeInterface
     }
 
     /**
-     * @param string $foursquareId
+     * @param string|null $foursquareId
+     *
+     * @return void
      */
     public function setFoursquareId($foursquareId)
     {
         $this->foursquareId = $foursquareId;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getFoursquareType()
+    {
+        return $this->foursquareType;
+    }
+
+    /**
+     * @param string|null $foursquareType
+     *
+     * @return void
+     */
+    public function setFoursquareType($foursquareType)
+    {
+        $this->foursquareType = $foursquareType;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getGooglePlaceId()
+    {
+        return $this->googlePlaceId;
+    }
+
+    /**
+     * @param string|null $googlePlaceId
+     *
+     * @return void
+     */
+    public function setGooglePlaceId($googlePlaceId)
+    {
+        $this->googlePlaceId = $googlePlaceId;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getGooglePlaceType()
+    {
+        return $this->googlePlaceType;
+    }
+
+    /**
+     * @param string|null $googlePlaceType
+     *
+     * @return void
+     */
+    public function setGooglePlaceType($googlePlaceType)
+    {
+        $this->googlePlaceType = $googlePlaceType;
     }
 }

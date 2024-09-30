@@ -6,6 +6,12 @@ use TelegramBot\Api\BaseType;
 use TelegramBot\Api\InvalidArgumentException;
 use TelegramBot\Api\TypeInterface;
 
+/**
+ * Class Chat
+ * This object represents a chat.
+ *
+ * @package TelegramBot\Api\Types
+ */
 class Chat extends BaseType implements TypeInterface
 {
     /**
@@ -13,158 +19,74 @@ class Chat extends BaseType implements TypeInterface
      *
      * @var array
      */
-    static protected $requiredParams = ['id', 'type'];
+    protected static $requiredParams = ['id', 'type'];
 
     /**
      * {@inheritdoc}
      *
      * @var array
      */
-    static protected $map = [
+    protected static $map = [
         'id' => true,
         'type' => true,
         'title' => true,
         'username' => true,
         'first_name' => true,
         'last_name' => true,
-        'photo' => ChatPhoto::class,
-        'bio' => true,
-        'description' => true,
-        'invite_link' => true,
-        'pinned_message' => Message::class,
-        'permissions' => ChatPermissions::class,
-        'slow_mode_delay' => true,
-        'sticker_set_name' => true,
-        'can_set_sticker_set' => true,
-        'linked_chat_id' => true,
-        'location' => ChatLocation::class
+        'is_forum' => true,
     ];
 
     /**
-     * Unique identifier for this chat, not exceeding 1e13 by absolute value
+     * Unique identifier for this chat.
      *
-     * @var int|string
+     * @var int|float
      */
     protected $id;
 
     /**
-     * Type of chat, can be either “private”, “group”, “supergroup” or “channel”
+     * Type of chat, can be either “private”, “group”, “supergroup” or “channel”.
      *
      * @var string
      */
     protected $type;
 
     /**
-     * Optional. Title, for channels and group chats
+     * Optional. Title, for supergroups, channels and group chats.
      *
-     * @var string
+     * @var string|null
      */
     protected $title;
 
     /**
-     * Optional. Username, for private chats and channels if available
+     * Optional. Username, for private chats, supergroups and channels if available.
      *
-     * @var string
+     * @var string|null
      */
     protected $username;
 
     /**
-     * Optional. First name of the other party in a private chat
+     * Optional. First name of the other party in a private chat.
      *
-     * @var string
+     * @var string|null
      */
     protected $firstName;
 
     /**
-     * Optional. Last name of the other party in a private chat
+     * Optional. Last name of the other party in a private chat.
      *
-     * @var string
+     * @var string|null
      */
     protected $lastName;
 
     /**
-     * Optional. Chat photo. Returned only in getChat.
+     * Optional. True, if the supergroup chat is a forum (has topics enabled).
      *
-     * @var ChatPhoto
+     * @var bool|null
      */
-    protected $photo;
+    protected $isForum;
 
     /**
-     * Optional. Bio of the other party in a private chat. Returned only in getChat
-     *
-     * @var string
-     */
-    protected $bio;
-
-    /**
-     * Optional. Description, for supergroups and channel chats. Returned only in getChat.
-     *
-     * @var string
-     */
-    protected $description;
-
-    /**
-     * Optional. Chat invite link, for supergroups and channel chats. Returned only in getChat.
-     *
-     * @var string
-     */
-    protected $inviteLink;
-
-    /**
-     * Optional. Pinned message, for supergroups. Returned only in getChat.
-     *
-     * @var Message
-     */
-    protected $pinnedMessage;
-
-    /**
-     * Optional. Default chat member permissions, for groups and supergroups. Returned only in getChat.
-     *
-     * @var ChatPermissions
-     */
-    protected $permissions;
-
-    /**
-     * Optional. For supergroups, the minimum allowed delay between consecutive messages sent by each unpriviledged
-     * user. Returned only in getChat.
-     *
-     * @var int
-     */
-    protected $slowModeDelay;
-
-    /**
-     * Optional. For supergroups, name of group sticker set. Returned only in getChat.
-     *
-     * @var string
-     */
-    protected $stickerSetName;
-
-    /**
-     * Optional. True, if the bot can change the group sticker set. Returned only in getChat.
-     *
-     * @var bool
-     */
-    protected $canSetStickerSet;
-
-    /**
-     * Optional. Unique identifier for the linked chat, i.e. the discussion group identifier for a channel and vice
-     * versa; for supergroups and channel chats. This identifier may be greater than 32 bits and some programming
-     * languages may have difficulty/silent defects in interpreting it. But it is smaller than 52 bits, so a signed 64
-     * bit integer or double-precision float type are safe for storing this identifier. Returned only in getChat.
-     *
-     * @var int
-     */
-    protected $linkedChatId;
-
-    /**
-     * Optional. For supergroups, the location to which the supergroup is connected. Returned only in getChat.
-     *
-     * @var ChatLocation
-     */
-    protected $location;
-
-    /**
-     * @return int|string
+     * @return int|float
      */
     public function getId()
     {
@@ -172,13 +94,13 @@ class Chat extends BaseType implements TypeInterface
     }
 
     /**
-     * @param int|string $id
-     *
+     * @param mixed $id
+     * @return void
      * @throws InvalidArgumentException
      */
-    public function setId($id)
+    public function setId($id): void
     {
-        if (is_integer($id) || is_float($id) || is_string($id)) {
+        if (is_integer($id) || is_float($id)) {
             $this->id = $id;
         } else {
             throw new InvalidArgumentException();
@@ -196,13 +118,13 @@ class Chat extends BaseType implements TypeInterface
     /**
      * @param string $type
      */
-    public function setType($type)
+    public function setType($type): void
     {
         $this->type = $type;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getTitle()
     {
@@ -210,15 +132,15 @@ class Chat extends BaseType implements TypeInterface
     }
 
     /**
-     * @param string $title
+     * @param string|null $title
      */
-    public function setTitle($title)
+    public function setTitle($title): void
     {
         $this->title = $title;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getUsername()
     {
@@ -226,15 +148,15 @@ class Chat extends BaseType implements TypeInterface
     }
 
     /**
-     * @param string $username
+     * @param string|null $username
      */
-    public function setUsername($username)
+    public function setUsername($username): void
     {
         $this->username = $username;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getFirstName()
     {
@@ -242,15 +164,15 @@ class Chat extends BaseType implements TypeInterface
     }
 
     /**
-     * @param string $firstName
+     * @param string|null $firstName
      */
-    public function setFirstName($firstName)
+    public function setFirstName($firstName): void
     {
         $this->firstName = $firstName;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getLastName()
     {
@@ -258,186 +180,26 @@ class Chat extends BaseType implements TypeInterface
     }
 
     /**
-     * @param string $lastName
+     * @param string|null $lastName
      */
-    public function setLastName($lastName)
+    public function setLastName($lastName): void
     {
         $this->lastName = $lastName;
     }
 
     /**
-     * @return ChatPhoto
+     * @return bool|null
      */
-    public function getPhoto()
+    public function getIsForum()
     {
-        return $this->photo;
+        return $this->isForum;
     }
 
     /**
-     * @param ChatPhoto $photo
+     * @param bool|null $isForum
      */
-    public function setPhoto($photo)
+    public function setIsForum($isForum): void
     {
-        $this->photo = $photo;
-    }
-
-    /**
-     * @return string
-     */
-    public function getBio()
-    {
-        return $this->bio;
-    }
-
-    /**
-     * @param string $bio
-     */
-    public function setBio($bio)
-    {
-        $this->bio = $bio;
-    }
-
-    /**
-     * @return string
-     */
-    public function getDescription()
-    {
-        return $this->description;
-    }
-
-    /**
-     * @param string $description
-     */
-    public function setDescription($description)
-    {
-        $this->description = $description;
-    }
-
-    /**
-     * @return string
-     */
-    public function getInviteLink()
-    {
-        return $this->inviteLink;
-    }
-
-    /**
-     * @param string $inviteLink
-     */
-    public function setInviteLink($inviteLink)
-    {
-        $this->inviteLink = $inviteLink;
-    }
-
-    /**
-     * @return Message
-     */
-    public function getPinnedMessage()
-    {
-        return $this->pinnedMessage;
-    }
-
-    /**
-     * @param Message $pinnedMessage
-     */
-    public function setPinnedMessage($pinnedMessage)
-    {
-        $this->pinnedMessage = $pinnedMessage;
-    }
-
-    /**
-     * @return ChatPermissions
-     */
-    public function getPermissions()
-    {
-        return $this->permissions;
-    }
-
-    /**
-     * @param ChatPermissions $permissions
-     */
-    public function setPermissions($permissions)
-    {
-        $this->permissions = $permissions;
-    }
-
-    /**
-     * @return int
-     */
-    public function getSlowModeDelay()
-    {
-        return $this->slowModeDelay;
-    }
-
-    /**
-     * @param int $slowModeDelay
-     */
-    public function setSlowModeDelay($slowModeDelay)
-    {
-        $this->slowModeDelay = $slowModeDelay;
-    }
-
-    /**
-     * @return string
-     */
-    public function getStickerSetName()
-    {
-        return $this->stickerSetName;
-    }
-
-    /**
-     * @param string $stickerSetName
-     */
-    public function setStickerSetName($stickerSetName)
-    {
-        $this->stickerSetName = $stickerSetName;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isCanSetStickerSet()
-    {
-        return $this->canSetStickerSet;
-    }
-
-    /**
-     * @param bool $canSetStickerSet
-     */
-    public function setCanSetStickerSet($canSetStickerSet)
-    {
-        $this->canSetStickerSet = $canSetStickerSet;
-    }
-
-    /**
-     * @return int
-     */
-    public function getLinkedChatId()
-    {
-        return $this->linkedChatId;
-    }
-
-    /**
-     * @param int $linkedChatId
-     */
-    public function setLinkedChatId($linkedChatId)
-    {
-        $this->linkedChatId = $linkedChatId;
-    }
-
-    /**
-     * @return ChatLocation
-     */
-    public function getLocation()
-    {
-        return $this->location;
-    }
-
-    /**
-     * @param ChatLocation $location
-     */
-    public function setLocation($location)
-    {
-        $this->location = $location;
+        $this->isForum = $isForum;
     }
 }
